@@ -14,18 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/gosuri/uitable"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"helm.sh/helm/v3/internal/monocular"
 	"helm.sh/helm/v3/pkg/cli/output"
 )
 
@@ -63,9 +60,9 @@ func newSearchHubCmd(out io.Writer) *cobra.Command {
 		Use:   "hub [KEYWORD]",
 		Short: "search for charts in the Artifact Hub or your own hub instance",
 		Long:  searchHubDesc,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return o.run(out, args)
-		},
+		// RunE: func(cmd *cobra.Command, args []string) error {
+		// 	// return o.run(out, args)
+		// },
 	}
 
 	f := cmd.Flags()
@@ -78,21 +75,21 @@ func newSearchHubCmd(out io.Writer) *cobra.Command {
 	return cmd
 }
 
-func (o *searchHubOptions) run(out io.Writer, args []string) error {
-	c, err := monocular.New(o.searchEndpoint)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("unable to create connection to %q", o.searchEndpoint))
-	}
+// func (o *searchHubOptions) run(out io.Writer, args []string) error {
+// c, err := monocular.New(o.searchEndpoint)
+// if err != nil {
+// 	return errors.Wrap(err, fmt.Sprintf("unable to create connection to %q", o.searchEndpoint))
+// }
 
-	q := strings.Join(args, " ")
-	results, err := c.Search(q)
-	if err != nil {
-		debug("%s", err)
-		return fmt.Errorf("unable to perform search against %q", o.searchEndpoint)
-	}
+// q := strings.Join(args, " ")
+// results, err := c.Search(q)
+// if err != nil {
+// 	debug("%s", err)
+// 	return fmt.Errorf("unable to perform search against %q", o.searchEndpoint)
+// }
 
-	return o.outputFormat.Write(out, newHubSearchWriter(results, o.searchEndpoint, o.maxColWidth, o.listRepoURL))
-}
+// return o.outputFormat.Write(out, newHubSearchWriter(results, o.searchEndpoint, o.maxColWidth, o.listRepoURL))
+// }
 
 type hubChartRepo struct {
 	URL  string `json:"url"`
@@ -113,21 +110,21 @@ type hubSearchWriter struct {
 	listRepoURL bool
 }
 
-func newHubSearchWriter(results []monocular.SearchResult, endpoint string, columnWidth uint, listRepoURL bool) *hubSearchWriter {
-	var elements []hubChartElement
-	for _, r := range results {
-		// Backwards compatibility for Monocular
-		url := endpoint + "/charts/" + r.ID
+// func newHubSearchWriter(results []monocular.SearchResult, endpoint string, columnWidth uint, listRepoURL bool) *hubSearchWriter {
+// 	var elements []hubChartElement
+// 	for _, r := range results {
+// 		// Backwards compatibility for Monocular
+// 		url := endpoint + "/charts/" + r.ID
 
-		// Check for artifactHub compatibility
-		if r.ArtifactHub.PackageURL != "" {
-			url = r.ArtifactHub.PackageURL
-		}
+// 		// Check for artifactHub compatibility
+// 		if r.ArtifactHub.PackageURL != "" {
+// 			url = r.ArtifactHub.PackageURL
+// 		}
 
-		elements = append(elements, hubChartElement{url, r.Relationships.LatestChartVersion.Data.Version, r.Relationships.LatestChartVersion.Data.AppVersion, r.Attributes.Description, hubChartRepo{URL: r.Attributes.Repo.URL, Name: r.Attributes.Repo.Name}})
-	}
-	return &hubSearchWriter{elements, columnWidth, listRepoURL}
-}
+// 		elements = append(elements, hubChartElement{url, r.Relationships.LatestChartVersion.Data.Version, r.Relationships.LatestChartVersion.Data.AppVersion, r.Attributes.Description, hubChartRepo{URL: r.Attributes.Repo.URL, Name: r.Attributes.Repo.Name}})
+// 	}
+// 	return &hubSearchWriter{elements, columnWidth, listRepoURL}
+// }
 
 func (h *hubSearchWriter) WriteTable(out io.Writer) error {
 	if len(h.elements) == 0 {

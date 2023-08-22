@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"fmt"
@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"helm.sh/helm/v3/cmd/helm/require"
-	"helm.sh/helm/v3/internal/version"
 )
 
 const versionDesc = `
@@ -85,19 +84,16 @@ func (o *versionOptions) run(out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		return tt.Execute(out, version.Get())
+		return tt.Execute(out, "0.0.0-experiment")
 	}
 	fmt.Fprintln(out, formatVersion(o.short))
 	return nil
 }
 
 func formatVersion(short bool) string {
-	v := version.Get()
+	v := "0.0.0-experiment"
 	if short {
-		if len(v.GitCommit) >= 7 {
-			return fmt.Sprintf("%s+g%s", v.Version, v.GitCommit[:7])
-		}
-		return version.GetVersion()
+		return "0.0.0-experiment"
 	}
 	return fmt.Sprintf("%#v", v)
 }

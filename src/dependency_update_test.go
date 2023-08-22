@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"fmt"
@@ -22,7 +22,6 @@ import (
 	"strings"
 	"testing"
 
-	"helm.sh/helm/v3/internal/test/ensure"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/helmpath"
@@ -149,7 +148,7 @@ func TestDependencyUpdateCmd(t *testing.T) {
 
 func TestDependencyUpdateCmd_DoNotDeleteOldChartsOnError(t *testing.T) {
 	defer resetEnv()()
-	defer ensure.HelmHome(t)()
+	// defer ensure.HelmHome(t)()
 
 	srv, err := repotest.NewTempServerWithCleanup(t, "testdata/testcharts/*.tgz")
 	if err != nil {

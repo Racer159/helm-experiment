@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"fmt"
@@ -22,7 +22,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"helm.sh/helm/v3/internal/test/ensure"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -30,10 +29,10 @@ import (
 )
 
 func TestCreateCmd(t *testing.T) {
-	defer ensure.HelmHome(t)()
+	// defer ensure.HelmHome(t)()
 	cname := "testchart"
-	dir := ensure.TempDir(t)
-	defer testChdir(t, dir)()
+	// dir := ensure.TempDir(t)
+	// defer testChdir(t, dir)()
 
 	// Run a create
 	if _, _, err := executeActionCommand("create " + cname); err != nil {
@@ -61,7 +60,7 @@ func TestCreateCmd(t *testing.T) {
 }
 
 func TestCreateStarterCmd(t *testing.T) {
-	defer ensure.HelmHome(t)()
+	// defer ensure.HelmHome(t)()
 	cname := "testchart"
 	defer resetEnv()()
 	os.MkdirAll(helmpath.CachePath(), 0755)
@@ -127,7 +126,7 @@ func TestCreateStarterCmd(t *testing.T) {
 
 func TestCreateStarterAbsoluteCmd(t *testing.T) {
 	defer resetEnv()()
-	defer ensure.HelmHome(t)()
+	// defer ensure.HelmHome(t)()
 	cname := "testchart"
 
 	// Create a starter.
